@@ -11,6 +11,7 @@ import UIKit
 class ConfigWiFiViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     var pickerDataSource = ["Open", "WPA/WPA2", "WEP"];
     
+    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     @IBOutlet weak var proxyStackView: UIStackView!
     @IBOutlet weak var securityTypePicker: UIPickerView!
     @IBOutlet weak var showPasswordSwitch: UISwitch!
@@ -58,18 +59,64 @@ class ConfigWiFiViewController: UIViewController, UIPickerViewDataSource, UIPick
             proxyPassword: self.proxyPasswordTextField.text!)
         
         let defaults = NSUserDefaults.standardUserDefaults()
-        let hostname = defaults.stringForKey("hostname_preference")
-        let port = defaults.integerForKey("port_preference")
-        let client:TCPClient = TCPClient(addr: hostname!, port: port)
-        
-        var (success, errmsg) = client.connect(timeout: 10000)
-        if(success) {
-            var (success, errmsg) = client.send(data:command.getBytes())
-        } else {
-            
+        var hostname = defaults.stringForKey("hostname_preference")
+        if(hostname == nil) {
+            hostname = "192.168.1.1"
         }
-        client.close()
+        var port = defaults.integerForKey("port_preference")
+        if(port == 0) {
+            port = 9001
+        }
+        
+        self.activityIndicatorView.hidden = false
+        self.activityIndicatorView.startAnimating()
+        self.configureWiFIButton.enabled = false
+        
+        defaults.setValue(self.domainNameTextField.text!, forKey: "wifiDomain_preference")
+        defaults.setValue(self.passwordTextField.text!, forKey: "configPassword_preference")
+        defaults.setValue(self.proxyHostTextField.text!, forKey: "proxyHostname_preference")
+        defaults.setValue(self.proxyPortTextField.text!, forKey: "proxyPort_preference")
+        defaults.setValue(self.proxyUserNameTextField.text!, forKey: "proxyUsername_preference")
+        defaults.setValue(self.proxyPasswordTextField.text!, forKey: "proxyPassword_preference")
+        
+        var backgroundQueue = NSOperationQueue()
+        backgroundQueue.addOperationWithBlock() {
+            var message = "Successfully Configured"
+            let client:TCPClient = TCPClient(addr: hostname!, port: port)
+            var (success, errmsg) = client.connect(timeout: 10)
+            if(success) {
+                var (success, errmsg) = client.send(data:command.getBytes())
+                if(!success) {
+                    message = errmsg
+                }
+            } else {
+                message = errmsg
+            }
+            defer {
+                client.close()
+            }
+            
+            NSOperationQueue.mainQueue().addOperationWithBlock() {
+                let alert = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+                defer {
+                    self.activityIndicatorView.hidden = true
+                    self.activityIndicatorView.stopAnimating()
+                }
+                
+                NSTimer.scheduledTimerWithTimeInterval(3.0, target: self, selector: #selector(self.delayedAction), userInfo: nil, repeats: false)
+                
+                defer {
+                    self.presentViewController(alert, animated: true, completion: nil)
+                    self.configureWiFIButton.enabled = true
+                }
+            }
+        }
     }
+    
+    func delayedAction() {
+        dismissViewControllerAnimated(false, completion: nil)
+    }
+    
     @IBAction func proxyPasswordSwitchChanged(sender: UISwitch) {
         if(sender.on) {
             proxyPasswordTextField.secureTextEntry = false
@@ -93,8 +140,18 @@ class ConfigWiFiViewController: UIViewController, UIPickerViewDataSource, UIPick
         self.securityTypePicker.delegate = self;
         self.securityTypePicker.layer.cornerRadius = 5.0
         self.securityTypePicker.clipsToBounds = true
-        self.configureWiFIButton.enabled = checkEnabledConfiguration()
         self.proxyStackView.hidden = true
+        self.activityIndicatorView.hidden = true
+        
+        let defaults = NSUserDefaults.standardUserDefaults()
+        self.domainNameTextField.text = defaults.stringForKey("wifiDomain_preference")
+        self.passwordTextField.text = defaults.stringForKey("configPassword_preference")
+        self.proxyHostTextField.text = defaults.stringForKey("proxyHostname_preference")
+        self.proxyPortTextField.text = defaults.stringForKey("proxyPort_preference")
+        self.proxyUserNameTextField.text = defaults.stringForKey("proxyUsername_preference")
+        self.proxyPasswordTextField.text = defaults.stringForKey("proxyPassword_preference")
+        
+        self.configureWiFIButton.enabled = checkEnabledConfiguration()
     }
 
     override func didReceiveMemoryWarning() {
