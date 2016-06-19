@@ -57,7 +57,10 @@ class ConfigWiFiViewController: UIViewController, UIPickerViewDataSource, UIPick
             proxyUsername: self.proxyUserNameTextField.text!,
             proxyPassword: self.proxyPasswordTextField.text!)
         
-        let client:TCPClient = TCPClient(addr: "192.168.0.4", port: 9080)
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let hostname = defaults.stringForKey("hostname_preference")
+        let port = defaults.integerForKey("port_preference")
+        let client:TCPClient = TCPClient(addr: hostname!, port: port)
         
         var (success, errmsg) = client.connect(timeout: 10000)
         if(success) {

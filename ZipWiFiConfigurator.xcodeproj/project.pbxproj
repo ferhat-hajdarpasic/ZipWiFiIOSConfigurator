@@ -14,6 +14,9 @@
 		A54B71451D16309E00082781 /* TCPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54B71441D16309E00082781 /* TCPClient.swift */; };
 		A54B71471D16337500082781 /* ConfigureWiFiCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54B71461D16337500082781 /* ConfigureWiFiCommand.swift */; };
 		A54B714B1D1640BF00082781 /* ytcpsocket.c in Sources */ = {isa = PBXBuildFile; fileRef = A54B71491D1640BF00082781 /* ytcpsocket.c */; };
+		A54B714F1D166F0A00082781 /* File in Resources */ = {isa = PBXBuildFile; fileRef = A54B714E1D166F0A00082781 /* File */; };
+		A54B71511D166F5000082781 /* File in Resources */ = {isa = PBXBuildFile; fileRef = A54B71501D166F5000082781 /* File */; };
+		A54B71531D166F7100082781 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A54B71521D166F7100082781 /* Settings.bundle */; };
 		A570A1EF1D083DDD00250B9F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A570A1EE1D083DDD00250B9F /* AppDelegate.swift */; };
 		A570A1F61D083DDD00250B9F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A570A1F41D083DDD00250B9F /* Main.storyboard */; };
 		A570A1F81D083DDD00250B9F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A570A1F71D083DDD00250B9F /* Assets.xcassets */; };
@@ -30,6 +33,9 @@
 		A54B71481D1640BE00082781 /* ZipWiFiConfigurator-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZipWiFiConfigurator-Bridging-Header.h"; sourceTree = "<group>"; };
 		A54B71491D1640BF00082781 /* ytcpsocket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ytcpsocket.c; sourceTree = "<group>"; };
 		A54B714A1D1640BF00082781 /* ytcpsocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ytcpsocket.h; sourceTree = "<group>"; };
+		A54B714E1D166F0A00082781 /* File */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = File; sourceTree = "<group>"; };
+		A54B71501D166F5000082781 /* File */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = File; sourceTree = "<group>"; };
+		A54B71521D166F7100082781 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		A570A1EB1D083DDD00250B9F /* ZipWiFiConfigurator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZipWiFiConfigurator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A570A1EE1D083DDD00250B9F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A570A1F51D083DDD00250B9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -52,6 +58,8 @@
 		A570A1E21D083DDD00250B9F = {
 			isa = PBXGroup;
 			children = (
+				A54B71521D166F7100082781 /* Settings.bundle */,
+				A54B714E1D166F0A00082781 /* File */,
 				A570A1ED1D083DDD00250B9F /* ZipWiFiConfigurator */,
 				A570A1EC1D083DDD00250B9F /* Products */,
 			);
@@ -82,6 +90,7 @@
 				A54B71491D1640BF00082781 /* ytcpsocket.c */,
 				A54B714A1D1640BF00082781 /* ytcpsocket.h */,
 				A54B71481D1640BE00082781 /* ZipWiFiConfigurator-Bridging-Header.h */,
+				A54B71501D166F5000082781 /* File */,
 			);
 			path = ZipWiFiConfigurator;
 			sourceTree = "<group>";
@@ -146,8 +155,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				A570A1FB1D083DDD00250B9F /* LaunchScreen.storyboard in Resources */,
+				A54B71511D166F5000082781 /* File in Resources */,
 				A570A1F81D083DDD00250B9F /* Assets.xcassets in Resources */,
 				A570A1F61D083DDD00250B9F /* Main.storyboard in Resources */,
+				A54B71531D166F7100082781 /* Settings.bundle in Resources */,
+				A54B714F1D166F0A00082781 /* File in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
