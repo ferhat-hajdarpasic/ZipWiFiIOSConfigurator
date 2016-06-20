@@ -8,9 +8,10 @@
 
 import UIKit
 
-class ConfigWiFiViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+class ConfigWiFiViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate {
     var pickerDataSource = ["Open", "WPA/WPA2", "WEP"];
     
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     @IBOutlet weak var proxyStackView: UIStackView!
     @IBOutlet weak var securityTypePicker: UIPickerView!
@@ -24,6 +25,9 @@ class ConfigWiFiViewController: UIViewController, UIPickerViewDataSource, UIPick
     @IBOutlet weak var proxyUserNameTextField: UITextField!
     @IBOutlet weak var proxyPasswordTextField: UITextField!
     @IBOutlet weak var configureWiFIButton: UIButton!
+    
+    var activeField:UITextField!
+    
     @IBAction func configureProxySwitchChanged(sender: UISwitch) {
         self.proxyStackView.hidden = !sender.on
         self.proxyHostTextField.enabled = sender.on
@@ -86,7 +90,9 @@ class ConfigWiFiViewController: UIViewController, UIPickerViewDataSource, UIPick
             var (success, errmsg) = client.connect(timeout: 10)
             if(success) {
                 var (success, errmsg) = client.send(data:command.getBytes())
-                if(!success) {
+                if(success) {
+                    client.read(2, timeout: 2)
+                } else {
                     message = errmsg
                 }
             } else {
@@ -151,6 +157,15 @@ class ConfigWiFiViewController: UIViewController, UIPickerViewDataSource, UIPick
         self.proxyUserNameTextField.text = defaults.stringForKey("proxyUsername_preference")
         self.proxyPasswordTextField.text = defaults.stringForKey("proxyPassword_preference")
         
+        self.passwordTextField.delegate = self
+        self.domainNameTextField.delegate = self
+        self.proxyHostTextField.delegate = self
+        self.proxyPortTextField.delegate = self
+        self.proxyUserNameTextField.delegate = self
+        self.proxyPasswordTextField.delegate = self
+        
+        self.registerForKeyboardNotifications()
+        
         self.configureWiFIButton.enabled = checkEnabledConfiguration()
     }
 
@@ -176,5 +191,68 @@ class ConfigWiFiViewController: UIViewController, UIPickerViewDataSource, UIPick
             (selectedSecurityTypeIndex >= 0) && (self.domainNameTextField.text?.isEmpty == false) && (self.passwordTextField.text?.isEmpty == false)
         return enableButton
     }
+    
+    func registerForKeyboardNotifications()
+    {
+        //Adding notifies on keyboard appearing
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ConfigWiFiViewController.keyboardWasShown(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ConfigWiFiViewController.keyboardWillBeHidden(_:)), name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    func deregisterFromKeyboardNotifications()
+    {
+        //Removing notifies on keyboard appearing
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    func keyboardWasShown(notification: NSNotification)
+    {
+        //Need to calculate keyboard exact size due to Apple suggestions
+        self.scrollView.scrollEnabled = true
+        let info : NSDictionary = notification.userInfo!
+        let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue().size
+        let contentInsets : UIEdgeInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize!.height, 0.0)
+        
+        self.scrollView.contentInset = contentInsets
+        self.scrollView.scrollIndicatorInsets = contentInsets
+        
+        var aRect : CGRect = self.view.frame
+        aRect.size.height -= keyboardSize!.height
+        if let activeFieldPresent = activeField
+        {
+            if (!CGRectContainsPoint(aRect, activeField!.frame.origin))
+            {
+                self.scrollView.scrollRectToVisible(activeField!.frame, animated: true)
+            }
+        }
+        
+        
+    }
+    
+    
+    func keyboardWillBeHidden(notification: NSNotification)
+    {
+        //Once keyboard disappears, restore original positions
+        let info : NSDictionary = notification.userInfo!
+        let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue().size
+        let contentInsets : UIEdgeInsets = UIEdgeInsetsMake(0.0, 0.0, -keyboardSize!.height, 0.0)
+        self.scrollView.contentInset = contentInsets
+        self.scrollView.scrollIndicatorInsets = contentInsets
+        self.view.endEditing(true)
+        self.scrollView.scrollEnabled = false
+        
+    }
+    
+    func textFieldDidBeginEditing(textField: UITextField!)
+    {
+        activeField = textField
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField!)
+    {
+        activeField = nil
+    }
+    
 }
 

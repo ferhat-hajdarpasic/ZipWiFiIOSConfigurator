@@ -296,6 +296,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitespider.ZipWiFiConfigurator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=*]" = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "ZipWiFiConfigurator/ZipWiFiConfigurator-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -313,6 +314,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.whitespider.ZipWiFiConfigurator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=*]" = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "ZipWiFiConfigurator/ZipWiFiConfigurator-Bridging-Header.h";
 			};
 			name = Release;
